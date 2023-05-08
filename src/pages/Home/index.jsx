@@ -20,6 +20,22 @@ export function Home() {
     navigate('/');
   };
 
+  const goToHome = () => {
+    navigate('/Home');
+  };
+
+  const goToSolicitacoes = () => {
+    navigate('/Solicitacoes');
+  };
+
+  const goToUsuarios = () => {
+    navigate('/Usuarios');
+  };
+
+  const goToPerfil = () => {
+    navigate('/Perfil');
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.navbar}></div>
@@ -28,7 +44,7 @@ export function Home() {
           <img className={styles.logo} src={logoLogin} alt="" />
         </div>
         <div className={styles.sideContent}>
-          <div className={styles.sidebarBtn}>
+          <div className={styles.sidebarBtn} onClick={goToHome}>
             <p className={styles.sidebarBtnContent}>
               <MdAddHome className={styles.incons} /> Home
             </p>
@@ -39,19 +55,19 @@ export function Home() {
               Lista de insumos
             </p>
           </div>
-          <div className={styles.sidebarBtn}>
+          <div className={styles.sidebarBtn} onClick={goToSolicitacoes}>
             <p className={styles.sidebarBtnContent}>
               <MdPendingActions className={styles.incons} />
               Solicitações de insumos
             </p>
           </div>
-          <div className={styles.sidebarBtn}>
+          <div className={styles.sidebarBtn} onClick={goToUsuarios}>
             <p className={styles.sidebarBtnContent}>
               <MdManageAccounts className={styles.incons} />
               Usuários
             </p>
           </div>
-          <div className={styles.sidebarBtn}>
+          <div className={styles.sidebarBtn} onClick={goToPerfil}>
             <p className={styles.sidebarBtnContent}>
               <MdAccountCircle className={styles.incons} /> Perfil
             </p>
