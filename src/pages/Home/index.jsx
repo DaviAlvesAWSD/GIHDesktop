@@ -1,6 +1,8 @@
 import styles from './styles.module.css';
 import { FaBeer } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+
 import {
   MdFormatListBulleted,
   MdAccountCircle,
@@ -12,6 +14,8 @@ import {
 
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
+
+//<img className={styles.logo} src={logoLogin} alt="" />
 
 export function Home() {
   const navigate = useNavigate();
@@ -40,9 +44,7 @@ export function Home() {
     <div className={styles.container}>
       <div className={styles.navbar}></div>
       <div className={styles.sidebar}>
-        <div className={styles.sideHeader}>
-          <img className={styles.logo} src={logoLogin} alt="" />
-        </div>
+        <div className={styles.sideHeader}></div>
         <div className={styles.sideContent}>
           <div className={styles.sidebarBtn} onClick={goToHome}>
             <p className={styles.sidebarBtnContent}>
@@ -81,7 +83,7 @@ export function Home() {
         </div>
       </div>
       <div className={styles.content}>
-        <span className={styles.textContent}> Bem vindo!</span>
+        <Outlet />
       </div>
     </div>
   );

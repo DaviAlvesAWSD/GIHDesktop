@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 
 import { Login } from '../pages/Login';
 import { Home } from '../pages/Home';
@@ -11,10 +11,11 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Solicitacoes" element={<Solicitacoes />} />
-        <Route path="/Usuarios" element={<Usuarios />} />
-        <Route path="/Perfil" element={<Perfil />} />
+        <Route path="/Home" element={<Home />}>
+          <Route path="Solicitacoes" element={<Solicitacoes />} />
+          <Route path="Usuarios" element={<Usuarios />} />
+          <Route path="Perfil" element={<Perfil />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
