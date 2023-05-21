@@ -29,15 +29,15 @@ export function Home() {
   };
 
   const goToSolicitacoes = () => {
-    navigate('/Solicitacoes');
+    navigate('/Home/Solicitacoes');
   };
 
   const goToUsuarios = () => {
-    navigate('/Usuarios');
+    navigate('/Home/Usuarios');
   };
 
   const goToPerfil = () => {
-    navigate('/Perfil');
+    navigate('/Home/Perfil');
   };
 
   return (
