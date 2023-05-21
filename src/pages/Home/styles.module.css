@@ -17,6 +17,10 @@
   height: 10vh;
   grid-area: header;
   box-shadow: 2px 2px 15px 0.5px rgba(61, 61, 61, 0.603);
+
+  display: flex;
+  justify-content: end;
+  padding: 1%;
 }
 
 .sidebar {
@@ -83,4 +87,16 @@
   width: 60%;
   margin-left: 19%;
   margin-top: 5%;
+}
+
+.inconLogin {
+  margin-right: 10px;
+  margin-top: -0px;
+  font-size: 30px;
+
+  color: rgb(66, 66, 66);
+}
+
+.ProfileBtn {
+  margin-left: 50%;
 }

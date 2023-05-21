@@ -57,15 +57,18 @@ export function Home() {
     <div className={styles.container}>
       <div className={styles.navbar}>
         <Menu>
-          <MenuButton as={Button} rightIcon={<MdAccountCircle />}>
-            Actions
+          <MenuButton
+            as={Button}
+            rightIcon={<MdAccountCircle className={styles.inconLogin} />}
+          >
+            Davi Alves
           </MenuButton>
           <MenuList>
-            <MenuItem>Download</MenuItem>
-            <MenuItem>Create a Copy</MenuItem>
-            <MenuItem>Mark as Draft</MenuItem>
-            <MenuItem>Delete</MenuItem>
-            <MenuItem>Attend a Workshop</MenuItem>
+            <MenuItem onClick={goToPerfil}>Perfil</MenuItem>
+            <MenuItem onClick={goToExit}>
+              <MdExitToApp className={styles.incons} />
+              Sair
+            </MenuItem>
           </MenuList>
         </Menu>
       </div>
@@ -95,17 +98,6 @@ export function Home() {
             <p className={styles.sidebarBtnContent}>
               <MdManageAccounts className={styles.incons} />
               Usuários
-            </p>
-          </div>
-          <div className={styles.sidebarBtn} onClick={goToPerfil}>
-            <p className={styles.sidebarBtnContent}>
-              <MdAccountCircle className={styles.incons} /> Perfil
-            </p>
-          </div>
-          <div className={styles.sidebarBtn} onClick={goToExit}>
-            <p className={styles.sidebarBtnContent}>
-              <MdExitToApp className={styles.incons} />
-              Sair
             </p>
           </div>
         </div>
