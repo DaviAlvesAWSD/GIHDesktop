@@ -3,6 +3,8 @@ import { FaBeer } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 
+import { Button, ButtonGroup } from '@chakra-ui/react';
+
 import {
   Menu,
   MenuButton,
@@ -55,19 +57,15 @@ export function Home() {
     <div className={styles.container}>
       <div className={styles.navbar}>
         <Menu>
-          <MenuButton as={Button} colorScheme="pink">
-            Profile
+          <MenuButton as={Button} rightIcon={<MdAccountCircle />}>
+            Actions
           </MenuButton>
           <MenuList>
-            <MenuGroup title="Profile">
-              <MenuItem>My Account</MenuItem>
-              <MenuItem>Payments </MenuItem>
-            </MenuGroup>
-            <MenuDivider />
-            <MenuGroup title="Help">
-              <MenuItem>Docs</MenuItem>
-              <MenuItem>FAQ</MenuItem>
-            </MenuGroup>
+            <MenuItem>Download</MenuItem>
+            <MenuItem>Create a Copy</MenuItem>
+            <MenuItem>Mark as Draft</MenuItem>
+            <MenuItem>Delete</MenuItem>
+            <MenuItem>Attend a Workshop</MenuItem>
           </MenuList>
         </Menu>
       </div>
