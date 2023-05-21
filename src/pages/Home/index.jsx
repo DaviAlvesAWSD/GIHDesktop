@@ -4,6 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 
 import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+} from '@chakra-ui/react';
+
+import {
   MdFormatListBulleted,
   MdAccountCircle,
   MdAddHome,
@@ -42,9 +53,28 @@ export function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.navbar}></div>
+      <div className={styles.navbar}>
+        <Menu>
+          <MenuButton as={Button} colorScheme="pink">
+            Profile
+          </MenuButton>
+          <MenuList>
+            <MenuGroup title="Profile">
+              <MenuItem>My Account</MenuItem>
+              <MenuItem>Payments </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title="Help">
+              <MenuItem>Docs</MenuItem>
+              <MenuItem>FAQ</MenuItem>
+            </MenuGroup>
+          </MenuList>
+        </Menu>
+      </div>
       <div className={styles.sidebar}>
-        <div className={styles.sideHeader}></div>
+        <div className={styles.sideHeader}>
+          <img className={styles.logo} src={logoLogin} alt="" />
+        </div>
         <div className={styles.sideContent}>
           <div className={styles.sidebarBtn} onClick={goToHome}>
             <p className={styles.sidebarBtnContent}>
