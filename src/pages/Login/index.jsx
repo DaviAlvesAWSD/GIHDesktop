@@ -24,13 +24,10 @@ export function Login() {
   const navigate = useNavigate();
 
   const SingIn = () => {
-    try {
-      new AuthService()
-        .login(form.email.value, form.password.value)
-        .then(navigate('/home'));
-    } catch (error) {
-      console.log('Não entrou!');
-    }
+    new AuthService()
+      .login(form.email.value, form.password.value)
+      .then((e) => console.log(e))
+      .catch((e) => console.log('Error', e));
   };
 
   return (
