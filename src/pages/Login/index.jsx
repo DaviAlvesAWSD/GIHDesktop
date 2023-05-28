@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthService from '../../services/AuthService.ts';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
@@ -23,11 +24,20 @@ export function Login() {
 
   const navigate = useNavigate();
 
-  const SingIn = () => {
-    new AuthService()
-      .login(form.email.value, form.password.value)
-      .then((e) => console.log(e))
-      .catch((e) => console.log('Error', e));
+  const onLogin = (e) => {
+    e.preventDefault();
+    signInWithEmailAndPassword(auth, form.email.value, form.password.value)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        navigate('/home');
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
   };
 
   return (
@@ -75,7 +85,7 @@ export function Login() {
             data-testid="password"
           />
         </div>
-        <button className="button" onClick={SingIn}>
+        <button className="button" onClick={onLogin}>
           Entrar
         </button>
       </form>
