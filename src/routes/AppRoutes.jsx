@@ -13,8 +13,8 @@ export function AppRoutes() {
         <Route path="/" element={<Login />} />
         <Route path="/Home" element={<Home />}>
           <Route path="/Home/Solicitacoes" element={<Solicitacoes />} />
-          <Route path="Usuarios" element={<Usuarios />} />
-          <Route path="Perfil" element={<Perfil />} />
+          <Route path="/Home/Usuarios" element={<Usuarios />} />
+          <Route path="/Home/Perfil" element={<Perfil />} />
         </Route>
       </Routes>
     </BrowserRouter>

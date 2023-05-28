@@ -30,8 +30,45 @@ import logoLogin from '../../assets/imagem/logo.png';
 
 //<img className={styles.logo} src={logoLogin} alt="" />
 
+import { onAuthStateChanged } from 'firebase/auth';
+// @ts-ignore
+import { auth } from '../../services/FirebaseConfig';
+
+import React, { useState, useEffect } from 'react';
+
+import { signOut } from 'firebase/auth';
+
 export function Home() {
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        // ...
+        console.log('uid', uid);
+      } else {
+        // User is signed out
+        // ...
+        console.log('user is logged out');
+        navigate('/');
+      }
+    });
+  }, []);
+
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate('/');
+        console.log('Signed out successfully');
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
 
   const goToExit = () => {
     navigate('/');
@@ -65,7 +102,7 @@ export function Home() {
           </MenuButton>
           <MenuList>
             <MenuItem onClick={goToPerfil}>Perfil</MenuItem>
-            <MenuItem onClick={goToExit}>
+            <MenuItem onClick={handleLogout}>
               <MdExitToApp className={styles.incons} />
               Sair
             </MenuItem>

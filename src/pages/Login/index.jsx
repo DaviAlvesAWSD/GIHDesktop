@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+// @ts-ignore
+import { auth } from '../../services/FirebaseConfig';
 
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
