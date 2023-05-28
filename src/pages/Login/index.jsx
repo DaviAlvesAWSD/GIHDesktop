@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../../services/AuthService';
 
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
@@ -20,8 +21,10 @@ export function Login() {
 
   const navigate = useNavigate();
 
-  const goToRegisterPage = () => {
-    navigate('/Home');
+  const SingIn = () => {
+    new AuthService()
+      .login(form.email.value, form.password.value)
+      .then(navigate('/Home'));
   };
 
   return (
@@ -69,7 +72,7 @@ export function Login() {
             data-testid="password"
           />
         </div>
-        <button className="button" onClick={goToRegisterPage}>
+        <button className="button" onClick={SingIn}>
           Entrar
         </button>
       </form>
