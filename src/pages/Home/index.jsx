@@ -39,13 +39,14 @@ import React, { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 
 export function Home() {
+  const [userL, setUser] = useState();
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
         const uid = user.uid;
-        // ...
+        setUser(user.email);
         console.log('uid', uid);
       } else {
         // User is signed out
@@ -98,7 +99,7 @@ export function Home() {
             as={Button}
             rightIcon={<MdAccountCircle className={styles.inconLogin} />}
           >
-            Davi Alves
+            {userL}
           </MenuButton>
           <MenuList>
             <MenuItem onClick={goToPerfil}>Perfil</MenuItem>
@@ -131,12 +132,14 @@ export function Home() {
               Solicitações de insumos
             </p>
           </div>
-          <div className={styles.sidebarBtn} onClick={goToUsuarios}>
-            <p className={styles.sidebarBtnContent}>
-              <MdManageAccounts className={styles.incons} />
-              Usuários
-            </p>
-          </div>
+          {userL == 'admin@admin.com' && (
+            <div className={styles.sidebarBtn} onClick={goToUsuarios}>
+              <p className={styles.sidebarBtnContent}>
+                <MdManageAccounts className={styles.incons} />
+                Usuários
+              </p>
+            </div>
+          )}
         </div>
       </div>
       <div className={styles.content}>
