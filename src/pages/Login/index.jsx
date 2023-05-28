@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthService } from '../../services/AuthService';
+import AuthService from '../../services/AuthService.ts';
 
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
@@ -19,12 +19,18 @@ export function Login() {
     },
   });
 
+  const [error, setError] = useState();
+
   const navigate = useNavigate();
 
   const SingIn = () => {
-    new AuthService()
-      .login(form.email.value, form.password.value)
-      .then(navigate('/Home'));
+    try {
+      new AuthService()
+        .login(form.email.value, form.password.value)
+        .then(navigate('/home'));
+    } catch (error) {
+      console.log('Não entrou!');
+    }
   };
 
   return (
