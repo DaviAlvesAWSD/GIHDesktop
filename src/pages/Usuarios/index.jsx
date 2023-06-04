@@ -5,6 +5,8 @@ import { useDisclosure } from '@chakra-ui/react';
 
 import { useEffect, useState, useRef } from 'react';
 
+import { useToast } from '@chakra-ui/react';
+
 import {
   collection,
   addDoc,
@@ -78,27 +80,45 @@ export function Usuarios() {
 
   const cancelRef = useRef();
 
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [cpf, setCpf] = useState('');
   const [users, setUsers] = useState([]);
+  const [novoUser, setNovoUser] = useState({
+    nome: '',
+    email: '',
+    senha: '',
+    cpf: '',
+  });
 
   const usersCollectionRef = collection(db, 'Users');
 
-  async const criarDado = () =>{
-    try {
-      const user = await addDoc(usersCollectionRef, {
-        nome,
-        email,
-        senha,
-        cpf,});
-
-      console.log('dados salvos com sucessos', user);
-    } catch (e) {
-      console.error('Error adding document: ', e);
-    }
+  function createUser() {
+    console.log(nome, email, senha, cpf);
   }
+
+  const criarUser = async () => {
+    try {
+      const docRef = await addDoc(usersCollectionRef, novoUser);
+      console.log('Documento salvo com ID:', docRef.id);
+    } catch (error) {
+      console.error('Erro ao salvar a nova coleção:', error);
+    }
+  };
+
+  async function deleteUser(id) {
+    const userDoc = doc(db, 'Users', id);
+    await deleteDoc(userDoc);
+    closeAlert();
+    toast({
+      description: 'Usuario deletado com sucesso!!',
+    });
+  }
+
+  const toast = useToast({
+    position: 'top',
+    title: 'Sucesso!!',
+    status: 'success',
+    duration: 9000,
+    isClosable: true,
+  });
 
   useEffect(() => {
     const getUsers = async () => {
@@ -134,6 +154,37 @@ export function Usuarios() {
             {users.map((user) => {
               return (
                 <>
+                  <AlertDialog
+                    isOpen={isOpenAlert}
+                    leastDestructiveRef={cancelRef}
+                    onClose={closeAlert}
+                  >
+                    <AlertDialogOverlay>
+                      <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                          Deletar usuario
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                          você tem certeza? você não podera recuperar o usuario
+                          após executar essa ação.
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                          <Button ref={cancelRef} onClick={closeAlert}>
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => deleteUser(user.id)}
+                            colorScheme="red"
+                            ml={3}
+                          >
+                            Delete
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialogOverlay>
+                  </AlertDialog>
                   <Tr>
                     <Td>{user.nome}</Td>
                     <Td>{user.email}</Td>
@@ -163,34 +214,6 @@ export function Usuarios() {
         </Table>
       </TableContainer>
 
-      <AlertDialog
-        isOpen={isOpenAlert}
-        leastDestructiveRef={cancelRef}
-        onClose={closeAlert}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Deletar usuario
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              você tem certeza? você não podera recuperar o usuario após
-              executar essa ação.
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={closeAlert}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" ml={3}>
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -206,7 +229,9 @@ export function Usuarios() {
                 <Input
                   type="tel"
                   placeholder="Nome"
-                  onChange={(e) => setNome(e.target.value)}
+                  onChange={(e) =>
+                    setNovoUser({ ...novoUser, nome: e.target.value })
+                  }
                 />
               </InputGroup>
               <h1>Email:</h1>
@@ -217,7 +242,9 @@ export function Usuarios() {
                 <Input
                   type="tel"
                   placeholder="Email"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) =>
+                    setNovoUser({ ...novoUser, email: e.target.value })
+                  }
                 />
               </InputGroup>
               <h1>CPF:</h1>
@@ -228,7 +255,9 @@ export function Usuarios() {
                 <Input
                   type="tel"
                   placeholder="CPF"
-                  onChange={(e) => setCpf(e.target.value)}
+                  onChange={(e) =>
+                    setNovoUser({ ...novoUser, cpf: e.target.value })
+                  }
                 />
               </InputGroup>
               <h1>senha:</h1>
@@ -239,14 +268,16 @@ export function Usuarios() {
                 <Input
                   type="password"
                   placeholder="Senha"
-                  onChange={(e) => setSenha(e.target.value)}
+                  onChange={(e) =>
+                    setNovoUser({ ...novoUser, senha: e.target.value })
+                  }
                 />
               </InputGroup>
             </div>
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={criarDado()} colorScheme="blue" mr={3}>
+            <Button onClick={criarUser} colorScheme="blue" mr={3}>
               Salvar
             </Button>
           </ModalFooter>
