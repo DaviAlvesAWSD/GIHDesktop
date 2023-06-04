@@ -1,60 +1,52 @@
 import styles from './styles.module.css';
-import {
-  MdFormatListBulleted,
-  MdAccountCircle,
-  MdAddHome,
-  MdExitToApp,
-  MdManageAccounts,
-  MdPendingActions,
-} from 'react-icons/md';
 
 import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 
+import { useDisclosure } from '@chakra-ui/react';
+
 import { Button, ButtonGroup } from '@chakra-ui/react';
+import { Stack, HStack, VStack } from '@chakra-ui/react';
+
+import { EmailIcon } from '@chakra-ui/icons';
 
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
 
 export function Solicitacoes() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <div className={styles.content}>
       <span className={styles.textContent}> Em construção!</span>
-      <Menu>
-        <MenuButton as={Button}>Actions</MenuButton>
-        <MenuList>
-          <MenuItem>Download</MenuItem>
-          <MenuItem>Create a Copy</MenuItem>
-          <MenuItem>Mark as Draft</MenuItem>
-          <MenuItem>Delete</MenuItem>
-          <MenuItem>Attend a Workshop</MenuItem>
-        </MenuList>
-      </Menu>
+      <Button
+        leftIcon={<EmailIcon />}
+        colorScheme="teal"
+        variant="solid"
+        onClick={onOpen}
+      ></Button>
 
-      <Menu>
-        <MenuButton as={Button} colorScheme="pink">
-          Profile
-        </MenuButton>
-        <MenuList>
-          <MenuGroup title="Profile">
-            <MenuItem>My Account</MenuItem>
-            <MenuItem>Payments </MenuItem>
-          </MenuGroup>
-          <MenuDivider />
-          <MenuGroup title="Help">
-            <MenuItem>Docs</MenuItem>
-            <MenuItem>FAQ</MenuItem>
-          </MenuGroup>
-        </MenuList>
-      </Menu>
+      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody></ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant="ghost">Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
