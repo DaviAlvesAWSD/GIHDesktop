@@ -1,5 +1,5 @@
 .table {
-  margin-top: 90px;
+  margin-top: 30px;
 }
 
 .tittle {
@@ -15,8 +15,8 @@
 }
 
 .addButton {
-  margin-left: 10px;
-  top: 70px;
+  margin-left: 6px;
+  top: 10px;
   background-color: #318ba7 !important;
   color: white !important;
 }

@@ -7,12 +7,17 @@ import { useEffect, useState, useRef } from 'react';
 
 import { useToast } from '@chakra-ui/react';
 
+// @ts-ignore
+import { auth } from '../../services/FirebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 import {
   collection,
   addDoc,
   doc,
   deleteDoc,
   getDocs,
+  updateDoc,
 } from 'firebase/firestore';
 
 // @ts-ignore
@@ -43,7 +48,7 @@ import {
 // @ts-ignore
 import logoLogin from '../../assets/imagem/logo.png';
 
-import { Button, ButtonGroup } from '@chakra-ui/react';
+import { Button, ButtonGroup, Text } from '@chakra-ui/react';
 import { DeleteIcon, AddIcon, EditIcon, PhoneIcon } from '@chakra-ui/icons';
 
 import {
@@ -66,6 +71,15 @@ import {
 import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 
 export function Usuarios() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Defina o número de itens por página conforme necessário
+
+  const getDataForCurrentPage = (data) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [isOpenAlert, setIsOpenAlert] = useState(false);
@@ -76,6 +90,16 @@ export function Usuarios() {
 
   const closeAlert = () => {
     setIsOpenAlert(false);
+  };
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const openModal = () => {
+    setIsOpenModal(true);
+  };
+
+  const closeModal = () => {
+    setIsOpenModal(false);
   };
 
   const cancelRef = useRef();
@@ -94,12 +118,33 @@ export function Usuarios() {
     console.log(nome, email, senha, cpf);
   }
 
+  const registrarUsuario = async () => {
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        novoUser.email,
+        novoUser.senha
+      );
+      onClose();
+      console.log('Novo usuário registrado com sucesso');
+    } catch (error) {
+      console.error('Erro ao registrar o usuário:', error);
+    }
+  };
   const criarUser = async () => {
     try {
       const docRef = await addDoc(usersCollectionRef, novoUser);
-      console.log('Documento salvo com ID:', docRef.id);
+      toast({
+        description: 'Usuario criado com sucesso!!',
+      });
+      registrarUsuario();
     } catch (error) {
       console.error('Erro ao salvar a nova coleção:', error);
+      toast({
+        title: 'Error!!',
+        description: 'Erro ao inserir usuario!!',
+        status: 'error',
+      });
     }
   };
 
@@ -110,6 +155,28 @@ export function Usuarios() {
     toast({
       description: 'Usuario deletado com sucesso!!',
     });
+
+    await window.location.reload();
+  }
+
+  async function editUser(id) {
+    try {
+      const userDoc = doc(db, 'Users', id);
+      await updateDoc(userDoc, novoUser);
+      console.log('Documento atualizado com sucesso');
+      toast({
+        description: 'Usuario editado com sucesso!!',
+      });
+      closeModal();
+    } catch (error) {
+      console.error('Erro ao atualizar o documento:', error);
+      toast({
+        title: 'Error!!',
+        description: 'Erro ao editar usuario!!',
+        status: 'error',
+      });
+      closeModal();
+    }
   }
 
   const toast = useToast({
@@ -151,7 +218,7 @@ export function Usuarios() {
             </Tr>
           </Thead>
           <Tbody>
-            {users.map((user) => {
+            {getDataForCurrentPage(users).map((user) => {
               return (
                 <>
                   <AlertDialog
@@ -185,6 +252,91 @@ export function Usuarios() {
                       </AlertDialogContent>
                     </AlertDialogOverlay>
                   </AlertDialog>
+                  <Modal blockScrollOnMount={false} isOpen={isOpenModal}>
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Editar dados do usuario</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        <div>
+                          <h1>Nome:</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdPerson className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="tel"
+                              placeholder="Nome"
+                              onChange={(e) =>
+                                setNovoUser({
+                                  ...novoUser,
+                                  nome: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                          <h1>Email:</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdOutlineEmail className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="tel"
+                              placeholder="Email"
+                              onChange={(e) =>
+                                setNovoUser({
+                                  ...novoUser,
+                                  email: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                          <h1>CPF:</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdContactPage className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="tel"
+                              placeholder="CPF"
+                              onChange={(e) =>
+                                setNovoUser({
+                                  ...novoUser,
+                                  cpf: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                          <h1>senha:</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdOutlineLockOpen className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="password"
+                              placeholder="Senha"
+                              onChange={(e) =>
+                                setNovoUser({
+                                  ...novoUser,
+                                  senha: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                        </div>
+                      </ModalBody>
+
+                      <ModalFooter>
+                        <Button
+                          onClick={() => editUser(user.id)}
+                          colorScheme="blue"
+                          mr={3}
+                        >
+                          editar
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
                   <Tr>
                     <Td>{user.nome}</Td>
                     <Td>{user.email}</Td>
@@ -196,6 +348,7 @@ export function Usuarios() {
                         colorScheme="teal"
                         variant="solid"
                         size="sm"
+                        onClick={openModal}
                       ></Button>
                       <Button
                         className={styles.deleteBtn}
@@ -213,7 +366,21 @@ export function Usuarios() {
           </Tbody>
         </Table>
       </TableContainer>
-
+      <Button
+        onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+        isDisabled={currentPage === 1}
+      >
+        Anterior
+      </Button>
+      <Text display="inline" mx={2}>
+        Página {currentPage} de {Math.ceil(users.length / itemsPerPage)}
+      </Text>
+      <Button
+        onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+        isDisabled={currentPage === Math.ceil(users.length / itemsPerPage)}
+      >
+        Próxima
+      </Button>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
