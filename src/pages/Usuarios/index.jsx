@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useDisclosure } from '@chakra-ui/react';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import {
   collection,
@@ -45,16 +45,38 @@ import { Button, ButtonGroup } from '@chakra-ui/react';
 import { DeleteIcon, AddIcon, EditIcon, PhoneIcon } from '@chakra-ui/icons';
 
 import {
-  IcoMdPersonnName,
+  MdPerson,
   MdOutlineEmail,
   MdContactPage,
   MdOutlineLockOpen,
 } from 'react-icons/md';
 
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
+} from '@chakra-ui/react';
+
 import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 
 export function Usuarios() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [isOpenAlert, setIsOpenAlert] = useState(false);
+
+  const openAlert = () => {
+    setIsOpenAlert(true);
+  };
+
+  const closeAlert = () => {
+    setIsOpenAlert(false);
+  };
+
+  const cancelRef = useRef();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -63,6 +85,20 @@ export function Usuarios() {
   const [users, setUsers] = useState([]);
 
   const usersCollectionRef = collection(db, 'Users');
+
+  async const criarDado = () =>{
+    try {
+      const user = await addDoc(usersCollectionRef, {
+        nome,
+        email,
+        senha,
+        cpf,});
+
+      console.log('dados salvos com sucessos', user);
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  }
 
   useEffect(() => {
     const getUsers = async () => {
@@ -116,6 +152,7 @@ export function Usuarios() {
                         colorScheme="red"
                         variant="solid"
                         size="sm"
+                        onClick={openAlert}
                       ></Button>
                     </Td>
                   </Tr>
@@ -125,6 +162,35 @@ export function Usuarios() {
           </Tbody>
         </Table>
       </TableContainer>
+
+      <AlertDialog
+        isOpen={isOpenAlert}
+        leastDestructiveRef={cancelRef}
+        onClose={closeAlert}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Deletar usuario
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              você tem certeza? você não podera recuperar o usuario após
+              executar essa ação.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={closeAlert}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -135,39 +201,54 @@ export function Usuarios() {
               <h1>Nome:</h1>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <IcoMdPersonnName />
+                  <MdPerson className={styles.iconInput} />
                 </InputLeftElement>
-                <Input type="tel" placeholder="Phone number" />
+                <Input
+                  type="tel"
+                  placeholder="Nome"
+                  onChange={(e) => setNome(e.target.value)}
+                />
               </InputGroup>
               <h1>Email:</h1>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <MdOutlineEmail />
+                  <MdOutlineEmail className={styles.iconInput} />
                 </InputLeftElement>
-                <Input type="tel" placeholder="Phone number" />
+                <Input
+                  type="tel"
+                  placeholder="Email"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </InputGroup>
               <h1>CPF:</h1>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <MdContactPage />
+                  <MdContactPage className={styles.iconInput} />
                 </InputLeftElement>
-                <Input type="tel" placeholder="Phone number" />
+                <Input
+                  type="tel"
+                  placeholder="CPF"
+                  onChange={(e) => setCpf(e.target.value)}
+                />
               </InputGroup>
               <h1>senha:</h1>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <MdOutlineLockOpen />
+                  <MdOutlineLockOpen className={styles.iconInput} />
                 </InputLeftElement>
-                <Input type="tel" placeholder="Phone number" />
+                <Input
+                  type="password"
+                  placeholder="Senha"
+                  onChange={(e) => setSenha(e.target.value)}
+                />
               </InputGroup>
             </div>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
+            <Button onClick={criarDado()} colorScheme="blue" mr={3}>
+              Salvar
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
