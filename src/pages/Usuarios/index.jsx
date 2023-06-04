@@ -9,7 +9,11 @@ import { useToast } from '@chakra-ui/react';
 
 // @ts-ignore
 import { auth } from '../../services/FirebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 
 import {
   collection,
@@ -120,13 +124,29 @@ export function Usuarios() {
 
   const registrarUsuario = async () => {
     try {
-      await createUserWithEmailAndPassword(
+      // Salva o estado atual do usuário autenticado (se houver)
+      const currentUser = auth.currentUser;
+
+      // Desconecta o usuário atual (se houver)
+      if (currentUser) {
+        await signOut(auth);
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(
         auth,
         novoUser.email,
         novoUser.senha
       );
+      const user = userCredential.user;
+      console.log('Usuário criado com sucesso:', user);
       onClose();
-      console.log('Novo usuário registrado com sucesso');
+
+      if (currentUser) {
+        await signInWithEmailAndPassword(
+          currentUser.email,
+          currentUser.password
+        );
+      }
     } catch (error) {
       console.error('Erro ao registrar o usuário:', error);
     }
