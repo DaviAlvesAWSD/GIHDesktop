@@ -5,6 +5,7 @@ import { Home } from '../pages/Home';
 import { Solicitacoes } from '../pages/Solicitacoes';
 import { Perfil } from '../pages/Perfil';
 import { Usuarios } from '../pages/Usuarios';
+import { Insumos } from '../pages/Insumos';
 
 export function AppRoutes() {
   return (
@@ -12,6 +13,7 @@ export function AppRoutes() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/Home" element={<Home />}>
+          <Route path="/Home/Insumos" element={<Insumos />} />
           <Route path="/Home/Solicitacoes" element={<Solicitacoes />} />
           <Route path="/Home/Usuarios" element={<Usuarios />} />
           <Route path="/Home/Perfil" element={<Perfil />} />

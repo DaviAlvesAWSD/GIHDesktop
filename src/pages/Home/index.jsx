@@ -79,6 +79,10 @@ export function Home() {
     navigate('/Home');
   };
 
+  const goToInsumos = () => {
+    navigate('/Home/Insumos');
+  };
+
   const goToSolicitacoes = () => {
     navigate('/Home/Solicitacoes');
   };
@@ -120,7 +124,7 @@ export function Home() {
               <MdAddHome className={styles.incons} /> Home
             </p>
           </div>
-          <div className={styles.sidebarBtn}>
+          <div className={styles.sidebarBtn} onClick={goToInsumos}>
             <p className={styles.sidebarBtnContent}>
               <MdFormatListBulleted className={styles.incons} />
               Lista de insumos

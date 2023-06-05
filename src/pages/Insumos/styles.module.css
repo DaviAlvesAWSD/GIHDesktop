@@ -1,0 +1,52 @@
+.table {
+  margin-top: 30px;
+}
+
+.tittle {
+  margin-left: 10px;
+  font-size: 40px;
+  font-weight: bold;
+  color: rgb(87, 87, 87);
+}
+
+.icon {
+  margin-left: 5px;
+  font-size: 15px;
+}
+
+.addButton {
+  margin-left: 6px;
+  top: 10px;
+  background-color: #318ba7 !important;
+  color: white !important;
+}
+
+.addButton:hover {
+  background-color: #1d5668 !important;
+}
+
+.addButton:active {
+  background-color: #318ba7 !important;
+}
+
+.editBtn {
+  margin: 5px;
+  background-color: #318ba7 !important;
+  color: white !important;
+}
+
+.editBtn:hover {
+  background-color: #1d5668 !important;
+}
+
+.editBtn:active {
+  background-color: #318ba7 !important;
+}
+
+.deleteBtn {
+  margin: 5px;
+}
+
+.iconInput {
+  color: rgba(87, 86, 86, 0.726);
+}
