@@ -118,24 +118,7 @@ export function Insumos() {
 
   const insumoCollectionRef = collection(db, 'Insumo');
 
-  const criarUser = async () => {
-    try {
-      const docRef = await addDoc(insumoCollectionRef, novoInsumo);
-      toast({
-        description: 'Usuario criado com sucesso!!',
-      });
-      registrarUsuario();
-    } catch (error) {
-      console.error('Erro ao salvar a nova coleção:', error);
-      toast({
-        title: 'Error!!',
-        description: 'Erro ao inserir usuario!!',
-        status: 'error',
-      });
-    }
-  };
-
-  async function deleteUser(id) {
+  async function deleteInsumo(id) {
     const userDoc = doc(db, 'Insumo', id);
     await deleteDoc(userDoc);
     closeAlert();
@@ -146,7 +129,7 @@ export function Insumos() {
     await window.location.reload();
   }
 
-  async function editUser(id) {
+  async function editInsumo(id) {
     try {
       const userDoc = doc(db, 'Insumo', id);
       await updateDoc(userDoc, novoInsumo);
@@ -199,6 +182,79 @@ export function Insumos() {
             {getDataForCurrentPage(insumos).map((insumo) => {
               return (
                 <>
+                  <Modal
+                    blockScrollOnMount={false}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                  >
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Cadastrar novo usuario</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody>
+                        <div>
+                          <h1>Nome:</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdPerson className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="text"
+                              placeholder="Nome"
+                              onChange={(e) =>
+                                setNovoInsumo({
+                                  ...novoInsumo,
+                                  nome: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                          <h1>Quantidade:</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdOutlineEmail className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="number"
+                              placeholder="Quantidade"
+                              onChange={(e) =>
+                                setNovoInsumo({
+                                  ...novoInsumo,
+                                  quantidade: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                          <h1>Tipo</h1>
+                          <InputGroup>
+                            <InputLeftElement pointerEvents="none">
+                              <MdContactPage className={styles.iconInput} />
+                            </InputLeftElement>
+                            <Input
+                              type="text"
+                              placeholder="tipo"
+                              onChange={(e) =>
+                                setNovoInsumo({
+                                  ...novoInsumo,
+                                  tipo: e.target.value,
+                                })
+                              }
+                            />
+                          </InputGroup>
+                        </div>
+                      </ModalBody>
+
+                      <ModalFooter>
+                        <Button
+                          onClick={() => editInsumo(insumo.id)}
+                          colorScheme="blue"
+                          mr={3}
+                        >
+                          Salvar
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
                   <AlertDialog
                     isOpen={isOpenAlert}
                     leastDestructiveRef={cancelRef}
@@ -217,7 +273,7 @@ export function Insumos() {
                             Cancel
                           </Button>
                           <Button
-                            onClick={() => deleteUser(insumo.id)}
+                            onClick={() => deleteInsumo(insumo.id)}
                             colorScheme="red"
                             ml={3}
                           >
@@ -263,62 +319,6 @@ export function Insumos() {
       >
         Próxima
       </Button>
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Cadastrar novo usuario</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <div>
-              <h1>Nome:</h1>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <MdPerson className={styles.iconInput} />
-                </InputLeftElement>
-                <Input
-                  type="text"
-                  placeholder="Nome"
-                  onChange={(e) =>
-                    setNovoInsumo({ ...novoInsumo, nome: e.target.value })
-                  }
-                />
-              </InputGroup>
-              <h1>Quantidade:</h1>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <MdOutlineEmail className={styles.iconInput} />
-                </InputLeftElement>
-                <Input
-                  type="number"
-                  placeholder="Quantidade"
-                  onChange={(e) =>
-                    setNovoInsumo({ ...novoInsumo, quantidade: e.target.value })
-                  }
-                />
-              </InputGroup>
-              <h1>Tipo</h1>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <MdContactPage className={styles.iconInput} />
-                </InputLeftElement>
-                <Input
-                  type="text"
-                  placeholder="tipo"
-                  onChange={(e) =>
-                    setNovoInsumo({ ...novoInsumo, tipo: e.target.value })
-                  }
-                />
-              </InputGroup>
-            </div>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
-              Salvar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </div>
   );
 }
