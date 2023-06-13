@@ -108,6 +108,7 @@ export function Insumos() {
 
   const cancelRef = useRef();
 
+  const [insumoSelecionado, setInsumoSelecionado] = useState(null);
   const [insumos, setInsumos] = useState([]);
   const [novoInsumo, setNovoInsumo] = useState({
     nome: '',
@@ -115,6 +116,11 @@ export function Insumos() {
     senha: '',
     cpf: '',
   });
+
+  const selecionarInsumo = (insumo) => {
+    setInsumoSelecionado(insumo);
+    onOpen();
+  };
 
   const insumoCollectionRef = collection(db, 'Insumo');
 
@@ -132,20 +138,22 @@ export function Insumos() {
   async function editInsumo(id) {
     try {
       const userDoc = doc(db, 'Insumo', id);
-      await updateDoc(userDoc, novoInsumo);
+      await updateDoc(userDoc, insumoSelecionado);
       console.log('Documento atualizado com sucesso');
       toast({
-        description: 'Usuario editado com sucesso!!',
+        description: 'Insumo editado com sucesso!!',
       });
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao atualizar o documento:', error);
       toast({
         title: 'Error!!',
-        description: 'Erro ao editar usuario!!',
+        description: 'Erro ao editar insumo!!',
         status: 'error',
       });
       closeModal();
+      window.location.reload();
     }
   }
 
@@ -189,64 +197,78 @@ export function Insumos() {
                   >
                     <ModalOverlay />
                     <ModalContent>
-                      <ModalHeader>Cadastrar novo usuario</ModalHeader>
+                      <ModalHeader>Alterar insumo</ModalHeader>
                       <ModalCloseButton />
                       <ModalBody>
                         <div>
-                          <h1>Nome:</h1>
-                          <InputGroup>
-                            <InputLeftElement pointerEvents="none">
-                              <MdPerson className={styles.iconInput} />
-                            </InputLeftElement>
-                            <Input
-                              type="text"
-                              placeholder="Nome"
-                              onChange={(e) =>
-                                setNovoInsumo({
-                                  ...novoInsumo,
-                                  nome: e.target.value,
-                                })
+                          {insumoSelecionado && (
+                            <>
+                              <h1>Nome:</h1>
+                              <InputGroup>
+                                <InputLeftElement pointerEvents="none">
+                                  <MdPerson className={styles.iconInput} />
+                                </InputLeftElement>
+                                <Input
+                                  type="text"
+                                  placeholder="Nome"
+                                  value={insumoSelecionado.nome}
+                                  onChange={(e) =>
+                                    setInsumoSelecionado({
+                                      ...insumoSelecionado,
+                                      nome: e.target.value,
+                                    })
+                                  }
+                                />
+                              </InputGroup>
+                              {
+                                <>
+                                  <h1>Quantidade:</h1>
+                                  <InputGroup>
+                                    <InputLeftElement pointerEvents="none">
+                                      <MdOutlineEmail
+                                        className={styles.iconInput}
+                                      />
+                                    </InputLeftElement>
+                                    <Input
+                                      type="number"
+                                      placeholder="Quantidade"
+                                      value={insumoSelecionado.quantidade}
+                                      onChange={(e) =>
+                                        setInsumoSelecionado({
+                                          ...insumoSelecionado,
+                                          quantidade: e.target.value,
+                                        })
+                                      }
+                                    />
+                                  </InputGroup>
+                                </>
                               }
-                            />
-                          </InputGroup>
-                          <h1>Quantidade:</h1>
-                          <InputGroup>
-                            <InputLeftElement pointerEvents="none">
-                              <MdOutlineEmail className={styles.iconInput} />
-                            </InputLeftElement>
-                            <Input
-                              type="number"
-                              placeholder="Quantidade"
-                              onChange={(e) =>
-                                setNovoInsumo({
-                                  ...novoInsumo,
-                                  quantidade: e.target.value,
-                                })
-                              }
-                            />
-                          </InputGroup>
-                          <h1>Tipo</h1>
-                          <InputGroup>
-                            <InputLeftElement pointerEvents="none">
-                              <MdContactPage className={styles.iconInput} />
-                            </InputLeftElement>
-                            <Input
-                              type="text"
-                              placeholder="tipo"
-                              onChange={(e) =>
-                                setNovoInsumo({
-                                  ...novoInsumo,
-                                  tipo: e.target.value,
-                                })
-                              }
-                            />
-                          </InputGroup>
+
+                              <h1>Tipo</h1>
+                              <InputGroup>
+                                <InputLeftElement pointerEvents="none">
+                                  <MdContactPage className={styles.iconInput} />
+                                </InputLeftElement>
+                                <Input
+                                  type="text"
+                                  placeholder="Tipo"
+                                  value={insumoSelecionado.tipo}
+                                  onChange={(e) =>
+                                    setInsumoSelecionado({
+                                      ...insumoSelecionado,
+                                      tipo: e.target.value,
+                                    })
+                                  }
+                                />
+                              </InputGroup>
+                            </>
+                          )}
                         </div>
                       </ModalBody>
 
                       <ModalFooter>
                         <Button
-                          onClick={() => editInsumo(insumo.id)}
+                          onClick={() => editInsumo(insumoSelecionado.id)}
                           colorScheme="blue"
                           mr={3}
                         >
@@ -294,7 +316,7 @@ export function Insumos() {
                         colorScheme="teal"
                         variant="solid"
                         size="sm"
-                        onClick={onOpen}
+                        onClick={() => selecionarInsumo(insumo)}
                       ></Button>
                     </Td>
                   </Tr>

@@ -106,7 +106,6 @@ export function Home() {
             {userL}
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={goToPerfil}>Perfil</MenuItem>
             <MenuItem onClick={handleLogout}>
               <MdExitToApp className={styles.incons} />
               Sair

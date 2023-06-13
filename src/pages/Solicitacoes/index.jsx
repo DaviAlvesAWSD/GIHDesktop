@@ -100,6 +100,7 @@ export function Solicitacoes() {
         status: 'error',
       });
       closeModal();
+      window.location.reload();
     }
   }
 
@@ -119,6 +120,7 @@ export function Solicitacoes() {
         status: 'error',
       });
       closeModal();
+      window.location.reload();
     }
   }
 
