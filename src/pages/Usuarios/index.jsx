@@ -74,7 +74,13 @@ import {
 
 import { Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 
+import MaskedInput from 'react-text-mask';
+
+import InputMask from 'react-input-mask';
+
 export function Usuarios() {
+  const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4; // Defina o número de itens por página conforme necessário
 
@@ -98,6 +104,11 @@ export function Usuarios() {
 
   const [isOpenModal, setIsOpenModal] = useState(false);
 
+  const abrirModalEdicao = (usuario) => {
+    setUsuarioSelecionado(usuario);
+    setIsOpenModal(true);
+  };
+
   const openModal = () => {
     setIsOpenModal(true);
   };
@@ -118,6 +129,21 @@ export function Usuarios() {
 
   const usersCollectionRef = collection(db, 'Users');
 
+  function formatarCPF(cpf) {
+    if (cpf) {
+      // Remove qualquer caractere que não seja número
+      cpf = cpf.replace(/\D/g, '');
+
+      // Remove pontos e traços
+      cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1$2$3$4');
+
+      // Aplica a máscara
+      cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+
+    return cpf;
+  }
+
   function createUser() {
     console.log(nome, email, senha, cpf);
   }
@@ -127,30 +153,28 @@ export function Usuarios() {
       // Salva o estado atual do usuário autenticado (se houver)
       const currentUser = auth.currentUser;
 
-      // Desconecta o usuário atual (se houver)
-      if (currentUser) {
-        await signOut(auth);
-      }
-
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         novoUser.email,
         novoUser.senha
       );
+
       const user = userCredential.user;
+
+      // Atualize o perfil do usuário com os dados necessários
+      await updateProfile(auth.currentUser, {
+        displayName: novoUser.nome,
+        // outras informações do perfil que você desejar
+      });
+
       console.log('Usuário criado com sucesso:', user);
       onClose();
-
-      if (currentUser) {
-        await signInWithEmailAndPassword(
-          currentUser.email,
-          currentUser.password
-        );
-      }
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao registrar o usuário:', error);
     }
   };
+
   const criarUser = async () => {
     try {
       const docRef = await addDoc(usersCollectionRef, novoUser);
@@ -182,7 +206,7 @@ export function Usuarios() {
   async function editUser(id) {
     try {
       const userDoc = doc(db, 'Users', id);
-      await updateDoc(userDoc, novoUser);
+      await updateDoc(userDoc, usuarioSelecionado);
       console.log('Documento atualizado com sucesso');
       toast({
         description: 'Usuario editado com sucesso!!',
@@ -285,11 +309,12 @@ export function Usuarios() {
                               <MdPerson className={styles.iconInput} />
                             </InputLeftElement>
                             <Input
-                              type="tel"
+                              type="text"
                               placeholder="Nome"
+                              value={usuarioSelecionado?.nome || ''}
                               onChange={(e) =>
-                                setNovoUser({
-                                  ...novoUser,
+                                setUsuarioSelecionado({
+                                  ...usuarioSelecionado,
                                   nome: e.target.value,
                                 })
                               }
@@ -301,11 +326,12 @@ export function Usuarios() {
                               <MdOutlineEmail className={styles.iconInput} />
                             </InputLeftElement>
                             <Input
-                              type="tel"
+                              type="text"
+                              value={usuarioSelecionado?.email || ''}
                               placeholder="Email"
                               onChange={(e) =>
-                                setNovoUser({
-                                  ...novoUser,
+                                setUsuarioSelecionado({
+                                  ...usuarioSelecionado,
                                   email: e.target.value,
                                 })
                               }
@@ -317,14 +343,19 @@ export function Usuarios() {
                               <MdContactPage className={styles.iconInput} />
                             </InputLeftElement>
                             <Input
-                              type="tel"
+                              type="text"
+                              value={formatarCPF(usuarioSelecionado?.cpf) || ''}
                               placeholder="CPF"
-                              onChange={(e) =>
-                                setNovoUser({
-                                  ...novoUser,
-                                  cpf: e.target.value,
-                                })
-                              }
+                              onChange={(e) => {
+                                const inputCPF = e.target.value
+                                  .replace(/\D/g, '')
+                                  .slice(0, 11); // Remove caracteres não numéricos
+
+                                setUsuarioSelecionado({
+                                  ...usuarioSelecionado,
+                                  cpf: inputCPF,
+                                });
+                              }}
                             />
                           </InputGroup>
                           <h1>senha:</h1>
@@ -335,9 +366,10 @@ export function Usuarios() {
                             <Input
                               type="password"
                               placeholder="Senha"
+                              value={usuarioSelecionado?.senha || ''}
                               onChange={(e) =>
-                                setNovoUser({
-                                  ...novoUser,
+                                setUsuarioSelecionado({
+                                  ...usuarioSelecionado,
                                   senha: e.target.value,
                                 })
                               }
@@ -347,8 +379,11 @@ export function Usuarios() {
                       </ModalBody>
 
                       <ModalFooter>
+                        <Button ref={cancelRef} onClick={closeModal}>
+                          Cancel
+                        </Button>
                         <Button
-                          onClick={() => editUser(user.id)}
+                          onClick={() => editUser(usuarioSelecionado?.id)}
                           colorScheme="blue"
                           mr={3}
                         >
@@ -368,7 +403,7 @@ export function Usuarios() {
                         colorScheme="teal"
                         variant="solid"
                         size="sm"
-                        onClick={openModal}
+                        onClick={() => abrirModalEdicao(user)}
                       ></Button>
                       <Button
                         className={styles.deleteBtn}
@@ -414,7 +449,7 @@ export function Usuarios() {
                   <MdPerson className={styles.iconInput} />
                 </InputLeftElement>
                 <Input
-                  type="tel"
+                  type="text"
                   placeholder="Nome"
                   onChange={(e) =>
                     setNovoUser({ ...novoUser, nome: e.target.value })
@@ -427,10 +462,14 @@ export function Usuarios() {
                   <MdOutlineEmail className={styles.iconInput} />
                 </InputLeftElement>
                 <Input
-                  type="tel"
+                  type="text"
+                  value={novoUser?.email || ''}
                   placeholder="Email"
                   onChange={(e) =>
-                    setNovoUser({ ...novoUser, email: e.target.value })
+                    setNovoUser({
+                      ...novoUser,
+                      email: e.target.value,
+                    })
                   }
                 />
               </InputGroup>
@@ -440,10 +479,14 @@ export function Usuarios() {
                   <MdContactPage className={styles.iconInput} />
                 </InputLeftElement>
                 <Input
-                  type="tel"
+                  type="text"
+                  value={formatarCPF(novoUser.cpf) || ''}
                   placeholder="CPF"
                   onChange={(e) =>
-                    setNovoUser({ ...novoUser, cpf: e.target.value })
+                    setNovoUser({
+                      ...novoUser,
+                      cpf: e.target.value.replace(/\D/g, '').slice(0, 11), // Remove caracteres não numéricos
+                    })
                   }
                 />
               </InputGroup>
