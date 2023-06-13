@@ -92,6 +92,7 @@ export function Solicitacoes() {
         description: 'Solicitação Aprovada',
       });
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao aprovar solicitação:', error);
       toast({
@@ -100,7 +101,6 @@ export function Solicitacoes() {
         status: 'error',
       });
       closeModal();
-      window.location.reload();
     }
   }
 
@@ -112,6 +112,7 @@ export function Solicitacoes() {
         description: 'Solicitação Reprovada',
       });
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao reprovar solicitação:', error);
       toast({
