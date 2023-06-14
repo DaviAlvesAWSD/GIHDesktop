@@ -94,7 +94,8 @@ export function Usuarios() {
 
   const [isOpenAlert, setIsOpenAlert] = useState(false);
 
-  const openAlert = () => {
+  const openAlert = (usuario) => {
+    setUsuarioSelecionado(usuario); // Definindo o ID do usuário selecionado no estado
     setIsOpenAlert(true);
   };
 
@@ -161,13 +162,14 @@ export function Usuarios() {
 
       const user = userCredential.user;
 
-      // Atualize o perfil do usuário com os dados necessários
-      await updateProfile(auth.currentUser, {
-        displayName: novoUser.nome,
-        // outras informações do perfil que você desejar
-      });
+      // Fazer login com o usuário admin@admin.com
+      const adminUserCredential = await signInWithEmailAndPassword(
+        auth,
+        'admin@admin.com',
+        'admin@admin.com'
+      );
 
-      console.log('Usuário criado com sucesso:', user);
+      const adminUser = adminUserCredential.user;
       onClose();
       window.location.reload();
     } catch (error) {
@@ -193,14 +195,23 @@ export function Usuarios() {
   };
 
   async function deleteUser(id) {
-    const userDoc = doc(db, 'Users', id);
-    await deleteDoc(userDoc);
-    closeAlert();
-    toast({
-      description: 'Usuario deletado com sucesso!!',
-    });
-
-    await window.location.reload();
+    try {
+      const userDoc = doc(db, 'Users', id);
+      await deleteDoc(userDoc);
+      closeAlert();
+      toast({
+        description: 'Usuario deletado com sucesso!!',
+      });
+      const updatedUsers = users.filter((user) => user.id !== id);
+      setUsers(updatedUsers);
+    } catch (error) {
+      console.error('Erro ao deletar o usuário:', error);
+      toast({
+        title: 'Error!!',
+        description: 'Erro ao deletar usuario!!',
+        status: 'error',
+      });
+    }
   }
 
   async function editUser(id) {
@@ -286,7 +297,7 @@ export function Usuarios() {
                             Cancel
                           </Button>
                           <Button
-                            onClick={() => deleteUser(user.id)}
+                            onClick={() => deleteUser(usuarioSelecionado?.id)}
                             colorScheme="red"
                             ml={3}
                           >
@@ -411,7 +422,7 @@ export function Usuarios() {
                         colorScheme="red"
                         variant="solid"
                         size="sm"
-                        onClick={openAlert}
+                        onClick={() => openAlert(user)}
                       ></Button>
                     </Td>
                   </Tr>
